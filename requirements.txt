@@ -1,0 +1,9 @@
+ansible
+boto
+boto3
+paramiko
+PyYAML
+Jinja2
+httplib2
+six
+

@@ -1,0 +1,51 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Installs Nginx web server
+      apt: 
+        pkg: nginx 
+        state: present 
+        update_cache: true
+      notify:
+        - start nginx
+
+    - name: copy nginx config file
+      copy: 
+        src: nginx.conf 
+        dest: /etc/nginx/sites-available/default
+
+    - name: enable config
+      file: 
+        dest: /etc/nginx/sites-enabled/default
+        src: /etc/nginx/sites-available/default
+        state: link  
+
+    - name: Upload default index.html for host
+      copy: 
+        src: ../Website/index.html 
+        dest: /usr/share/nginx/html/index.html 
+        mode: 0644
+
+    - name: Upload assets file
+      copy: 
+        src: ../Website/assets 
+        dest: /usr/share/nginx/html/ 
+        mode: 0644
+
+    - name: Create a directory called images
+      file: 
+        path: /usr/share/nginx/html/images 
+        state: directory 
+        mode: 0755
+
+    - name: restart nginx
+      service: 
+        name: nginx 
+        state: restarted
+
+  handlers:
+    - name: start Nginx
+      service:
+        name: nginx 
+        state: started
